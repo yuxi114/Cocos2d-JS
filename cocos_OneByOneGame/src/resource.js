@@ -1,4 +1,4 @@
-let g_resources = [
+var g_resources = [
     "res/1.png",
     "res/2.png",
     "res/3.png",

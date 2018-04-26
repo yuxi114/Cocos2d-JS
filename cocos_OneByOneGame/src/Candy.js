@@ -1,6 +1,6 @@
 // 继承sprite, 用于加载糖果图片
 
-let Candy = cc.Sprite.extend({
+var Candy = cc.Sprite.extend({
 
     type: 0,    //类型(颜色: 0-4五种糖果颜色)
     column: 0,  //列

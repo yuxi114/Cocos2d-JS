@@ -1,6 +1,6 @@
 // 游戏核心GameScene类和GameLayer类，管理糖果的布局和消除逻辑
 
-let GameLayer = cc.Layer.extend({
+var GameLayer = cc.Layer.extend({
 
     mapPanel: null,
     ui: null,
@@ -15,21 +15,21 @@ let GameLayer = cc.Layer.extend({
     ctor: function() {
         this._super();
 
-        let size = cc.winSize;
+        var size = cc.winSize;
 
-        let bg = new cc.Sprite('res/bg.jpg');
+        var bg = new cc.Sprite('res/bg.jpg');
         this.addChild(bg, 1);
         bg.x = size.width/2;
         bg.y = size.height/2;
 
-        let clippingPanel = new cc.ClippingNode();
+        var clippingPanel = new cc.ClippingNode();
         this.addChild(clippingPanel, 2);
         this.mapPanel = new cc.Layer();
         this.mapPanel.x = (size.width - Constant.CANDY_WIDTH * Constant.MAP_SIZE)/2;
         this.mapPanel.Y = (size.height - Constant.CANDY_WIDTH * Constant.MAP_SIZE)/2;
         clippingPanel.addChild(this.mapPanel, 1);
 
-        let stencil = new cc.DrawNode();
+        var stencil = new cc.DrawNode();
         // 绘制正方形
         stencil.drawRect(
             cc.p(this.mapPanel.x, this.mapPanel.y), 
@@ -64,10 +64,10 @@ let GameLayer = cc.Layer.extend({
         this.targetScore = Constant.levels[this.level].targetScore;
 
         this.map = [];
-        for (let i=0; i<Constant.MAP_SIZE; i++) {
-            let column = [];
-            for (let j=0; j<Constant.MAP_SIZE; j++) {
-                let candy = Candy.createRandomType(i, j);
+        for (var i=0; i<Constant.MAP_SIZE; i++) {
+            var column = [];
+            for (var j=0; j<Constant.MAP_SIZE; j++) {
+                var candy = Candy.createRandomType(i, j);
                 this.mapPanel.addChild(candy);
                 candy.x = i * Constant.CANDY_WIDTH + Constant.CANDY_WIDTH/2;
                 candy.y = j * Constant.CANDY_WIDTH + Constant.CANDY_WIDTH/2;
@@ -77,29 +77,29 @@ let GameLayer = cc.Layer.extend({
         }
     },
     _onTouchBegan: function (touch, event) {
-        let column = Math.floor((touch.getLocation().x - this.mapPanel.x) / Constant.CANDY_WIDTH);
-        let row = Math.floor((touch.getLocation().y - this.mapPanel.y) / Constant.CANDY_WIDTH);
+        var column = Math.floor((touch.getLocation().x - this.mapPanel.x) / Constant.CANDY_WIDTH);
+        var row = Math.floor((touch.getLocation().y - this.mapPanel.y) / Constant.CANDY_WIDTH);
         this._popCandy(column, row);
         return true;
     },
     _onMouseDown: function (event) {
-        let column = Math.floor((event.getLocationX() - this.mapPanel.x) / Constant.CANDY_WIDTH);
-        let row = Math.floor((event.getLocationY() - this.mapPanel.y) / Constant.CANDY_WIDTH);
+        var column = Math.floor((event.getLocationX() - this.mapPanel.x) / Constant.CANDY_WIDTH);
+        var row = Math.floor((event.getLocationY() - this.mapPanel.y) / Constant.CANDY_WIDTH);
         this._popCandy(column, row);
     },
     _popCandy: function (column, row) {
         if (this.moving) {
             return;
         }
-        let joinCandys = [this.map[column][row]];
-        let index = 0;
-        let pushIntoCandys = function (element) {
+        var joinCandys = [this.map[column][row]];
+        var index = 0;
+        var pushIntoCandys = function (element) {
             if (joinCandys.indexOf(element) < 0) {
                 joinCandys.push(element);
             }
         };
         while (index < joinCandys.length) {
-            let candy = joinCandys[index];
+            var candy = joinCandys[index];
             if (this._checkCandyExist(candy.column - 1, candy.row) && this.map[candy.column - 1][candy.row].type == candy.type) {
                 pushIntoCandys(this.map[candy.column - 1][candy.row]);
             }
@@ -122,8 +122,8 @@ let GameLayer = cc.Layer.extend({
         this.steps++;
         this.moving = true;
 
-        for (let i=0; i<joinCandys.length; i++) {
-            let candy = joinCandys[i];
+        for (var i=0; i<joinCandys.length; i++) {
+            var candy = joinCandys[i];
             this.mapPanel.removeChild(candy);
             this.map[candy.column][candy.row] = null;
         }
@@ -142,26 +142,26 @@ let GameLayer = cc.Layer.extend({
     
     // 补充糖果逻辑
     _generateNewCandy: function () {
-        let maxTime = 0;
-        for (let i=0; i<Constant.MAP_SIZE; i++) {
-            let missCount = 0;
-            for (let j=0; j<this.map[i].length; j++) {
-                let candy = this.map[i][j];
+        var maxTime = 0;
+        for (var i=0; i<Constant.MAP_SIZE; i++) {
+            var missCount = 0;
+            for (var j=0; j<this.map[i].length; j++) {
+                var candy = this.map[i][j];
                 if (!candy) {
-                    let candy = Candy.createRandomType(i, Constant.MAP_SIZE + missCount);
+                    var candy = Candy.createRandomType(i, Constant.MAP_SIZE + missCount);
                     this.mapPanel.addChild(candy);
                     candy.x = candy.column * Constant.CANDY_WIDTH + Constant.CANDY_WIDTH / 2;
                     candy.y = candy.row * Constant.CANDY_WIDTH + Constant.CANDY_WIDTH / 2;
                     this.map[i][candy.row] = candy;
                     missCount++;
                 } else {
-                    let fallLength = missCount;
+                    var fallLength = missCount;
                     if (fallLength > 0) {
-                        let duration = Math.sqrt(2 * fallLength / Constant.FALL_ACCELERATION);
+                        var duration = Math.sqrt(2 * fallLength / Constant.FALL_ACCELERATION);
                         if (duration > maxTime) {
                             maxTime = duration;
                         }
-                        let move = cc.moveTo(duration, candy.x, candy.y - Constant.CANDY_WIDTH * fallLength).easing(cc.easeIn(2));
+                        var move = cc.moveTo(duration, candy.x, candy.y - Constant.CANDY_WIDTH * fallLength).easing(cc.easeIn(2));
                         candy.runAction(move);
                         candy.row -= fallLength;
                         this.map[i][j] = null;
@@ -170,7 +170,7 @@ let GameLayer = cc.Layer.extend({
                 }
             }
             // 移除超出地图的临时元素位置
-            for (let j = this.map[i].length; j >= Constant.MAP_SIZE; j--) {
+            for (var j = this.map[i].length; j >= Constant.MAP_SIZE; j--) {
                 this.map[i].splice(j, 1);
             }
         }
@@ -199,10 +199,10 @@ let GameLayer = cc.Layer.extend({
     }
 });
 
-let GameScene = cc.Scene.extend({
+var GameScene = cc.Scene.extend({
     onEnter: function () {
         this._super();
-        let layer = new GameLayer();
+        var layer = new GameLayer();
         this.addChild(layer);
     }
 });

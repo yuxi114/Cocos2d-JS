@@ -1,8 +1,8 @@
 // 负责游戏的数据储存和读取
 
-let Storage = {
+var Storage = {
     getCurrentLevel: function () {
-        let level = cc.sys.localStorage.getItem('level') || 0;
+        var level = cc.sys.localStorage.getItem('level') || 0;
         return parseInt(level);
     },
 
@@ -12,7 +12,7 @@ let Storage = {
     },
 
     getCurrentScore: function() {
-        let score = cc.sys.localStorage.getItem('score') || 0;
+        var score = cc.sys.localStorage.getItem('score') || 0;
         return parseInt(score);
     },
 
